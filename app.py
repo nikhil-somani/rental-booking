@@ -19,13 +19,13 @@ class Inventory(db.Model):
    
 class Customers(db.Model):
     c_id = db.Column(db.Integer, primary_key=True)
-    c_name =  db.Column(db.String(200), nullable=False)
+    c_name =  db.Column(db.String(500), nullable=False)
     c_email = db.Column(EmailType, nullable=False)
     c_phone = db.Column(db.Integer)
     
 class Rentals(db.Model):
     r_id = db.Column(db.Integer, primary_key=True)
-    c_name =  db.Column(db.String(200), nullable=False)
+    c_name =  db.Column(db.String(500), nullable=False)
     rental_date = db.Column(db.String(200), nullable=False)
     return_date = db.Column(db.String(200), nullable=True)
     vehicle_type = db.Column(db.String(200), nullable=False)
@@ -48,11 +48,19 @@ def customer():
         cst = Customers(c_name=cname, c_email=cemail, c_phone=cphone)
         db.session.add(cst)
         db.session.commit()
-        flash('Customer added Succesfully')
+        flash('Customer Details added Succesfully', 'insertion')
         return redirect(url_for('customer'))
         
     allcustomer = Customers.query.all()
     return render_template('customer.html', allcustomer=allcustomer)
+
+@app.route("/customer/delete/<int:c_id>")
+def customerdelete(c_id):
+    cust = Customers.query.filter_by(c_id=c_id).first()
+    db.session.delete(cust)
+    db.session.commit()
+    flash('Customer Details Deleted Successfully', 'deletion')
+    return redirect(url_for('customer'))
 
 @app.route('/rental', methods=['GET', 'POST'])
 def rentals():
@@ -63,7 +71,8 @@ def rentals():
             flash(' "{}" cannot be rented as it is already booked'.format(res.v_name))
             return redirect(url_for('rentals'))
         else:
-            cname = request.form['c_name']
+            cname = request.form.get('c_name')
+            
             rentaldate = datetime.strptime(request.form['rental_date'], '%Y-%m-%d')
             if request.form['return_date'] == '':
                 returndate = ''
@@ -79,7 +88,7 @@ def rentals():
             res.v_count -= 1
             db.session.add(res)
             db.session.commit()
-            flash('Booking added Succesfully')
+            flash('Booking added Succesfully', 'insertion')
             return redirect(url_for('rentals'))
     
     allcustomer = Customers.query.all()
@@ -87,6 +96,19 @@ def rentals():
     allinventory = Inventory.query.all() 
     return render_template('rental.html', allcustomer=allcustomer, allbooking = allbooking, allinventory=allinventory)
 
+@app.route("/rental/delete/<int:r_id>/<name>")
+def rentaldelete(r_id, name):
+    rental = Rentals.query.filter_by(r_id=r_id).first()
+    db.session.delete(rental)
+    db.session.commit()
+    
+    res = Inventory.query.filter_by(v_name=name).first()
+    res.v_count += 1
+    db.session.add(res)
+    db.session.commit()
+    flash('Booking Deleted and Inventory Updated', 'deletion')
+    return redirect(url_for('rentals'))
+    
 
 
 @app.route('/inventory')
