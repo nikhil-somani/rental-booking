@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block titleblock %}
+    Rental |
+{% endblock titleblock %}
+{% block rentalblock %}
+    
+
+
+
+    <div class="container my-3">
+        <h2>Add Rental Bookings</h2>
+        <form method='post' action="/rental">
+            <div class="form-group">
+                <label for="c_name">Customer Name</label>
+                <select class="form-select form-control" name='c_name' id='c_name' required='required'
+                    aria-label="Default select example">
+                    <option selected>Select the customer</option>
+                    {% for customer in allcustomer %}
+                    <option value={{customer.c_name}}>{{ customer.c_name }}</option>
+                    {% endfor %}
+                </select>
+
+            </div>
+
+            <div class="form-group">
+                <label for="rental_date">Rental Date</label>
+                <input type="date" class="form-control" name='rental_date' id="rental_date" aria-describedby="emailHelp"
+                    placeholder="Enter name">
+            </div>
+            <div class="form-group">
+                <label for="return_date">Return Date</label>
+                <input type="date" class="form-control" name='return_date' id="return_date" aria-describedby="emailHelp"
+                    placeholder="Enter name">
+            </div>
+
+            <div class="form-group">
+                <label for="v_type">Vehicle Type</label>
+                <select class="form-select form-control" name='v_type' id='v_type' required='required'
+                    aria-label="Default select example">
+                    <option selected>Vehicle Type</option>
+                    {% for vehicle in allinventory %}
+                    <option value={{vehicle.v_name}}>{{ vehicle.v_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        <div>
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+
+
+            {% for message in messages %}
+            <div class="alert alert-primary my-3" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+
+    </div>
+
+
+    <div class="container my-3">
+        <h2>Rental Bookings</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Sno</th>
+                    <th scope="col">Customer Name</th>
+                    <th scope="col">Rental Date</th>
+                    <th scope="col">Return Date</th>
+                    <th scope="col">Vehicle Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in allbooking %}
+
+
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ booking.c_name }}</td>
+                    <td>{{ booking.rental_date }}</td>
+                    <td>{{ booking.return_date }}</td>
+                    <td>{{ booking.vehicle_type }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock rentalblock %}

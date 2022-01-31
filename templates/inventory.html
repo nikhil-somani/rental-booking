@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block titleblock %}
+    Inventory |
+{% endblock titleblock %}
+{% block inventoryblock %}
+
+
+<div class="container my-3">
+  <h2>Inventory Details</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Sno</th>
+        <th scope="col">Vehicle Type</th>
+        <th scope="col">Inventory Available</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for inventory in allinventory %}
+
+
+      <tr>
+        <th scope="row">{{ loop.index }}</th>
+        <td>{{ inventory.v_name }}</td>
+        <td>{{ inventory.v_count }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock inventoryblock %}
